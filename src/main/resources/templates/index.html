@@ -22,7 +22,6 @@
         <link rel="icon" href="https://getbootstrap.com/docs/5.0/assets/img/favicons/favicon.ico">
         <meta name="theme-color" content="#7952b3">
 
-
         <style>
           .bd-placeholder-img {
             font-size: 1.125rem;
@@ -64,7 +63,7 @@
                             <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
                         </li>
                     </ul>
-                    <form class="d-flex">
+                    <form th:action="@{/logout}" class="d-flex">
                         <button class="btn btn-outline-success" type="submit">Sign out</button>
                     </form>
                 </div>
