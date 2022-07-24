@@ -9,5 +9,5 @@ A Spring Boot project that shows how to implement form based authentication usin
 - Bootstrap
 
 ### Bootstrap v5.0 html templates used
-https://getbootstrap.com/docs/5.0/examples/sign-in/
-https://getbootstrap.com/docs/5.0/examples/sticky-footer-navbar/
+<https://getbootstrap.com/docs/5.0/examples/sign-in/>
+<https://getbootstrap.com/docs/5.0/examples/sticky-footer-navbar/>
