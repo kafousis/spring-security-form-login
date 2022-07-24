@@ -4,17 +4,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import org.springframework.security.web.authentication.AuthenticationEntryPointFailureHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -26,29 +22,41 @@ public class SecurityConfig {
     }
 
     @Bean
-    public InMemoryUserDetailsManager userDetailsService() {
+    public UserDetailsService users() {
 
-        List<GrantedAuthority> adminAuthority = Collections.singletonList(new SimpleGrantedAuthority("ADMIN"));
-        User admin = new User("admin", passwordEncoder().encode("admin"), adminAuthority);
+        UserDetails admin = User.builder()
+                .username("admin")
+                .password(passwordEncoder().encode("admin"))
+                .roles("ADMIN")
+                .build();
 
-        List<GrantedAuthority> userAuthority = Collections.singletonList(new SimpleGrantedAuthority("USER"));
-        User user = new User("user", passwordEncoder().encode("user"), userAuthority);
+        UserDetails user = User.builder()
+                .username("user")
+                .password(passwordEncoder().encode("user"))
+                .roles("USER")
+                .build();
 
-        return new InMemoryUserDetailsManager(admin, user);
+        return new InMemoryUserDetailsManager(user, admin);
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        // because of this SecurityFilterChain @Bean
-        // the default spring security form does not show up
-
         http
                 .csrf().disable()
+
                 .authorizeRequests()
-                    .antMatchers("/login").permitAll()
+                    .antMatchers("/login*").permitAll()
                     .antMatchers("/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated();
+                .anyRequest().authenticated()
+
+                .and()
+
+                .formLogin()
+
+                    .loginPage("/login")
+                    .defaultSuccessUrl("/login?success=true", true)
+                    .failureUrl("/login?error=true");
 
         return http.build();
     }
